@@ -1,6 +1,7 @@
 import spacy
 from spacy.matcher import Matcher
 import re
+import ent_pii_reco
 
 # ============== Phone number matching ==============
 # Regex: ((\(\d{3}\)?)|(\d{3}))([\s-./]?)(\d{3})([\s-./]?)(\d{4})
@@ -59,6 +60,7 @@ def find_pii(text):
                 is_personal_id_mid = True
             span = doc[start:end]
             print("++ Found " + string_id + ": " + span.text)
+
     if not (is_ssn_hyphen_mid and is_ssn_mid and is_personal_id_mid):
         # No luck for one of tokens search, try full text
         print("Start full text search...")
@@ -68,6 +70,9 @@ def find_pii(text):
             search_pii_in_text(ssn_mid, doc)
         if not is_personal_id_mid:
             search_pii_in_text(personal_id_mid, doc)
+
+    print("Start entity search...")
+    ent_pii_reco.search_pii_by_entity(doc)
 
 
 def search_pii_in_text(string_id, doc):
